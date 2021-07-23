@@ -1,0 +1,20 @@
+Flask==1.1.4
+Flask-Cors==3.0.10
+httplib2==0.14.0
+oauthlib==3.1.0
+
+# python3-wheel
+# PyAutoGUI==0.9.52
+# pyscreenshot==3.0
+
+requests==2.22.0
+requests-oauthlib==1.3.0
+requests-unixsocket==0.2.0
+simplejson==3.16.0
+urllib3==1.25.8
+
+
+pandas
+tensorflow
+nltk
+contractions
