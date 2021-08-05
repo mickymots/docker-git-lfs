@@ -38,6 +38,22 @@ ADD app /app
 # make startup.sh executable
 RUN chmod +x /app/startup.sh
 
+
+#install git
+RUN apt install -y git wget
+
+WORKDIR /tmp
+RUN wget https://github.com/git-lfs/git-lfs/releases/download/v2.13.3/git-lfs-linux-amd64-v2.13.3.tar.gz
+RUN gunzip git-lfs-linux-amd64-v2.13.3.tar.gz
+RUN tar -xvf git-lfs-linux-amd64-v2.13.3.tar
+RUN ./install.sh
+RUN git lfs install
+
+WORKDIR /app
+RUN git lfs clone https://github.com/mickymots/docker-git-lfs.git
+
+RUN cp docker-git-lfs/app/Bidirectional_LSTM.hdf5 /app/
+
 CMD ["/app/startup.sh"]
 
 
