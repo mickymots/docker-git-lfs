@@ -28,6 +28,8 @@ RUN pip3 install --upgrade tensorflow
 
 RUN pip3 install --upgrade keras
 
+RUN apt install -y wget
+
 #COPY NLTK data
 COPY nltk_data /root/nltk_data
 
@@ -40,7 +42,7 @@ RUN chmod +x /app/startup.sh
 
 
 #install git
-RUN apt install -y git wget
+RUN apt install -y git
 
 WORKDIR /tmp
 RUN wget https://github.com/git-lfs/git-lfs/releases/download/v2.13.3/git-lfs-linux-amd64-v2.13.3.tar.gz
