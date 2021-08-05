@@ -1,5 +1,5 @@
 # pull caddy php
-FROM php:7.3.0-apache
+FROM php:7.3.0-apache AS base-image
 
 COPY site /var/www/html
 
@@ -30,6 +30,10 @@ RUN pip3 install --upgrade keras
 
 RUN apt install -y wget
 
+
+# Seperate build stage for application
+
+FROM base-image as app-image 
 #COPY NLTK data
 COPY nltk_data /root/nltk_data
 
@@ -54,7 +58,7 @@ RUN git lfs install
 WORKDIR /app
 RUN git lfs clone https://github.com/mickymots/docker-git-lfs.git
 
-RUN cp docker-git-lfs/app/Bidirectional_LSTM.hdf5 /app/
+# RUN cp docker-git-lfs/app/Bidirectional_LSTM.hdf5 /app/
 
 CMD ["/app/startup.sh"]
 
