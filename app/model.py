@@ -1,7 +1,9 @@
 from flask import Flask, render_template, redirect, url_for,request
 from flask import make_response
 from flask import Flask
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
+from flask import send_from_directory
+
 import pandas as pd
 import numpy as np
 import contractions
@@ -13,10 +15,12 @@ import warnings
 import re
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-from keras.models import load_model
+from tensorflow import keras
+
+from tensorflow.keras.models import load_model
 from nltk.tokenize import RegexpTokenizer
 from tensorflow.python.keras.preprocessing import text, sequence
-from tensorflow import keras
+
 from nltk.stem.snowball import SnowballStemmer
 from nltk.tokenize import word_tokenize
 
@@ -156,10 +160,36 @@ weight_matrix, word_idx = load_glove_model()
 bi_lstm_model = load_model('Bidirectional_LSTM.hdf5')
 model = keras.models.load_model('model.h5')
 
-
-
+ 
+UPLOAD_FOLDER = '/app'
 app = Flask(__name__)
+
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route("/file_upload", methods=['GET', 'POST'])
+
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'photo' not in request.files:
+           return '''
+			<!doctype html>
+			<title>Upload new File</title>
+			<h1>Upload File failed</h1>
+			
+			'''
+        file = request.files['photo']
+        
+        if file:
+            filename = file.filename
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return url_for('download_file', name=filename)
+
+@app.route('/uploads/<name>')
+def download_file(name):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], name)
 
 @app.route('/login', methods=['GET', 'POST'])
 

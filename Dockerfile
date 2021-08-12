@@ -17,16 +17,16 @@ RUN apt install -y python3-pip
 WORKDIR /app
 
 #copy requirements
-COPY app/requirements.txt .
+COPY base_requirements.txt .
 
 # install requirements
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r base_requirements.txt
 
 RUN pip3 install --upgrade pip
 
-RUN pip3 install --upgrade tensorflow 
+# RUN pip3 install --upgrade tensorflow 
 
-RUN pip3 install --upgrade keras
+# RUN pip3 install --upgrade keras
 
 RUN apt install -y wget
 
@@ -34,6 +34,13 @@ RUN apt install -y wget
 # Seperate build stage for application
 
 FROM base-image as app-image 
+
+#copy requirements
+COPY app_requirements.txt .
+
+# install requirements
+RUN pip3 install -r app_requirements.txt
+
 #COPY NLTK data
 COPY nltk_data /root/nltk_data
 
@@ -58,8 +65,8 @@ RUN git lfs install
 WORKDIR /app
 RUN git lfs clone https://github.com/mickymots/docker-git-lfs.git
 
-# RUN cp docker-git-lfs/app/Bidirectional_LSTM.hdf5 /app/
-
+RUN cp docker-git-lfs/app/Bidirectional_LSTM.hdf5 /app/
+RUN cp -r  docker-git-lfs/site/node_modules /var/www/html
 CMD ["/app/startup.sh"]
 
 
