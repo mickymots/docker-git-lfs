@@ -1,0 +1,57 @@
+#speechBubbles
+    {
+        font-family: "Lint McCree Intl BB";
+        display: flex;
+    }
+    
+.inner-tri
+{
+width: 0;
+height: 0;
+position:relative;
+bottom: 20px;
+border-style: solid;
+border-width: 0 12px 15px 5;
+border-color: transparent white transparent transparent;
+}
+    
+.out-tri
+{
+width: 0;
+height: 0;
+position:relative;
+bottom: 35px;
+z-index: -1;
+border-style: solid;
+border-width: 0 20px 20px 0;
+border-color: transparent black transparent transparent;
+}
+    
+/* Style tab links */
+.tablinks{
+background-color: #555;
+color: white;
+float: left;
+border: none;
+outline: none;
+cursor: pointer;
+padding: 14px 16px;
+font-size: 17px;
+width: 50%;
+}
+
+.tablinks:hover {
+background-color: #777;
+}
+    
+.charlink:hover {
+background-color: #777;
+}
+
+/* Style the tab content (and add height:100% for full page content) */
+.tabcontent,.charcontent{
+color:black;
+display: none;
+padding: 100px 20px;
+height: 100%;
+}

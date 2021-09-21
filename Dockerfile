@@ -1,74 +1,38 @@
-# pull caddy php
+#using apache server becuase tensor flow is not compatible with caddy
 FROM php:7.3.0-apache AS base-image
+RUN apt-get update
 
-COPY site /var/www/html
+#install python and pip
+RUN apt-get install -y python3-pip
 
+#make directory for flask app
+RUN mkdir /var/www/flaskApp
 
-
-# update repos
-RUN apt update
-
-#Install pyhton
-
-RUN apt install -y python3-pip
-
-# change workdir to app
-
-WORKDIR /app
-
-#copy requirements
-COPY base_requirements.txt .
-
-# install requirements
-RUN pip3 install -r base_requirements.txt
-
-RUN pip3 install --upgrade pip
-
-# RUN pip3 install --upgrade tensorflow 
-
-# RUN pip3 install --upgrade keras
-
-RUN apt install -y wget
-
-
-# Seperate build stage for application
-
-FROM base-image as app-image 
-
-#copy requirements
-COPY app_requirements.txt .
-
-# install requirements
-RUN pip3 install -r app_requirements.txt
-
-#COPY NLTK data
+#move over files that will not change
 COPY nltk_data /root/nltk_data
+#download large ml files from google drive with gdown
+RUN pip3 install gdown
+RUN gdown --id 1RYQzhsBEPTjXuLY1KphvQWsC7C3XFk9F --output /var/www/flaskApp/Bidirectional_LSTM.hdf5
+RUN gdown --id 13-E-IO0gpaz9wxb62QOiBiDfAY1p5RhW --output /var/www/flaskApp/glove_model.txt
 
-#copy flask app
-ADD app /app
+#copy over requirements and install them
+COPY flaskApp/py_requirements.txt /var/www/flaskApp/
+RUN pip3 install --upgrade pip
+RUN pip3 install -r /var/www/flaskApp/py_requirements.txt
 
+#copy over the rest of flask app files
+COPY flaskApp /var/www/flaskApp
 
-# make startup.sh executable
-RUN chmod +x /app/startup.sh
+#make executable to fire up server
+RUN chmod +x /var/www/flaskApp/startup.sh
 
+#
+RUN mkdir /var/www/html/assets
+COPY html/assets /var/www/html/assets
+#copy over rest of site files
+COPY html /var/www/html
 
-#install git
-RUN apt install -y git
-
-WORKDIR /tmp
-RUN wget https://github.com/git-lfs/git-lfs/releases/download/v2.13.3/git-lfs-linux-amd64-v2.13.3.tar.gz
-RUN gunzip git-lfs-linux-amd64-v2.13.3.tar.gz
-RUN tar -xvf git-lfs-linux-amd64-v2.13.3.tar
-RUN ./install.sh
-RUN git lfs install
-
-WORKDIR /app
-RUN git lfs clone https://github.com/mickymots/docker-git-lfs.git
-
-RUN cp docker-git-lfs/app/Bidirectional_LSTM.hdf5 /app/
-RUN cp -r  docker-git-lfs/site/node_modules /var/www/html
-CMD ["/app/startup.sh"]
-
-
+#fireup server
+CMD ["/var/www/flaskApp/startup.sh"]
 
 EXPOSE 80 5000
