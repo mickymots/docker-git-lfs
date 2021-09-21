@@ -1,0 +1,8 @@
+pandas
+tensorflow>2.0.0
+keras==2.2.4
+nltk
+contractions
+Flask
+Flask-Cors
+numpy 
